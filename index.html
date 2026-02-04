@@ -83,7 +83,7 @@
             <div class="card">
                 <button class="main-btn btn-primary" id="btn-buy" onclick="showScreen('screen-catalog')">🔍 Найти товар</button>
                 <button class="main-btn" id="btn-my-items" onclick="showScreen('screen-my-items')">📋 Мои товары</button>
-                <button class="main-btn" id="btn-template" style="background:#34c759; color:white; border:none;" onclick="tg.sendData('REQ_TEMPLATE')">📥 Скачать шаблон Excel</button>
+                <button class="main-btn" id="btn-template" style="background:#34c759; color:white; border:none;" onclick="showTemplateCategories()">📥 Скачать шаблон Excel</button>
             </div>
             <button class="main-btn" style="color:var(--danger); border:none;" onclick="location.reload()">🚪 Выйти</button>
         </div>
@@ -112,6 +112,14 @@
         </div>
     </div>
 
+    <div id="modal-template" class="modal" onclick="closeTemplateModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 style="margin-top:0">Выберите категорию</h3>
+            <div id="template-categories-container"></div>
+            <button class="main-btn" onclick="closeTemplateModal()">Отмена</button>
+        </div>
+    </div>
+
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
@@ -119,11 +127,20 @@
         let dbOffers = [];
         let selectedSku = null;
 
+        // Определяем адрес API сервера
+        // Можно задать через URL параметр: ?api=https://your-server.com
+        // Или оставить пустым для автоматического определения
+        const urlParams = new URLSearchParams(window.location.search);
+        const API_BASE = urlParams.get('api') || 'https://your-server.com'; // ЗАМЕНИТЕ на адрес вашего сервера!
+
         async function init() {
             try {
-                const res = await fetch("http://127.0.0.1:8080/api/offers");
+                const res = await fetch(`${API_BASE}/api/offers`);
                 dbOffers = await res.json();
-            } catch (e) { console.log("База пока пуста"); }
+            } catch (e) { 
+                console.log("Ошибка загрузки данных:", e);
+                console.log("Проверьте, что API сервер доступен по адресу:", API_BASE);
+            }
         }
 
         function showScreen(id) {
@@ -251,6 +268,30 @@
                 tg.sendData(`DELETE_OFFER|${selectedSku}`);
                 closeModal();
             }
+        }
+
+        function showTemplateCategories() {
+            const categories = ['iPhone', 'iPad', 'Watch', 'Mac'];
+            const cont = document.getElementById('template-categories-container');
+            cont.innerHTML = categories.map(cat => `
+                <button class="main-btn" style="margin-bottom:10px" onclick="downloadTemplate('${cat}')">📥 ${cat}</button>
+            `).join('') + `
+                <button class="main-btn btn-primary" style="margin-bottom:10px" onclick="downloadTemplate(null)">📥 Все категории</button>
+            `;
+            document.getElementById('modal-template').classList.add('active');
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('modal-template').classList.remove('active');
+        }
+
+        function downloadTemplate(category) {
+            if (category) {
+                tg.sendData(`REQ_TEMPLATE|${category}`);
+            } else {
+                tg.sendData('REQ_TEMPLATE');
+            }
+            closeTemplateModal();
         }
 
         init();
