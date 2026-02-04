@@ -129,7 +129,7 @@
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'screen-my-items') renderSellerItems();
+            if(id === 'screen-my-items') renderSellerCategories();
             if(id === 'screen-catalog') renderCatalog();
         }
 
@@ -141,10 +141,68 @@
             showScreen('screen-main');
         }
 
+        function renderSellerCategories() {
+            const cont = document.getElementById('my-items-container');
+            const myData = dbOffers.filter(o => o.seller_id === myId);
+            if (myData.length === 0) {
+                cont.innerHTML = '<div class="card">Пусто. Загрузите Excel.</div>';
+                return;
+            }
+
+            const categoriesMap = {};
+            myData.forEach(o => {
+                const cat = (o.product && o.product.split(' ')[0]) || 'Другое';
+                if (!categoriesMap[cat]) categoriesMap[cat] = [];
+                categoriesMap[cat].push(o);
+            });
+
+            const categoriesHtml = Object.keys(categoriesMap).sort().map(cat => `
+                <div class="offer-card" onclick="renderSellerItemsByCategory('${encodeURIComponent(cat)}')">
+                    <div style="text-align:left">
+                        <b>${cat}</b><br><small style="color:var(--hint)">Товаров: ${categoriesMap[cat].length}</small>
+                    </div>
+                </div>
+            `).join('');
+
+            cont.innerHTML = categoriesHtml + `
+                <button class="main-btn" onclick="renderSellerItems()">📋 Весь список товаров</button>
+            `;
+        }
+
+        function renderSellerItemsByCategory(encodedCategory) {
+            const category = decodeURIComponent(encodedCategory);
+            const cont = document.getElementById('my-items-container');
+            const myData = dbOffers.filter(o => {
+                if (o.seller_id !== myId) return false;
+                const cat = (o.product && o.product.split(' ')[0]) || 'Другое';
+                return cat === category;
+            });
+
+            if (myData.length === 0) {
+                cont.innerHTML = '<div class="card">В этой категории пока пусто.</div>' +
+                    '<button class="main-btn" onclick="renderSellerCategories()">⬅️ К категориям</button>';
+                return;
+            }
+
+            cont.innerHTML = myData.map(o => `
+                <div class="offer-card" onclick="openEdit('${o.sku}', '${o.product}', ${o.price})">
+                    <div style="text-align:left">
+                        <b>${o.product}</b><br><small style="color:var(--hint)">SKU: ${o.sku}</small>
+                    </div>
+                    <div class="price">${o.price.toLocaleString()} ₽</div>
+                </div>
+            `).join('') + `
+                <button class="main-btn" onclick="renderSellerCategories()">⬅️ К категориям</button>
+            `;
+        }
+
         function renderSellerItems() {
             const cont = document.getElementById('my-items-container');
             const myData = dbOffers.filter(o => o.seller_id === myId);
-            if(myData.length === 0) return cont.innerHTML = '<div class="card">Пусто. Загрузите Excel.</div>';
+            if(myData.length === 0) {
+                cont.innerHTML = '<div class="card">Пусто. Загрузите Excel.</div>';
+                return;
+            }
             
             cont.innerHTML = myData.map(o => `
                 <div class="offer-card" onclick="openEdit('${o.sku}', '${o.product}', ${o.price})">
@@ -153,7 +211,9 @@
                     </div>
                     <div class="price">${o.price.toLocaleString()} ₽</div>
                 </div>
-            `).join('');
+            `).join('') + `
+                <button class="main-btn" onclick="renderSellerCategories()">⬅️ К категориям</button>
+            `;
         }
 
         function renderCatalog() {
