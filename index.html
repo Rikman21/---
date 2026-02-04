@@ -14,71 +14,63 @@
             --accent-text: var(--tg-theme-button-text-color, #ffffff);
             --hint: var(--tg-theme-hint-color, #8e8e93);
             --danger: #ff3b30;
-            --success: #34c759;
         }
-
-        body { 
-            font-family: -apple-system, system-ui, sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; padding: 16px 16px 120px 16px; 
-        }
-
-        .screen { display: none; opacity: 0; transition: opacity 0.2s ease; }
-        .screen.active { display: block; opacity: 1; }
-        
-        #loader {
-            position: fixed; top:0; left:0; right:0; bottom:0;
-            background: var(--bg-color); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid var(--hint);
-            border-top: 4px solid var(--accent); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .header { text-align: center; margin-bottom: 20px; font-size: 22px; font-weight: 700; }
-        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; }
-        .main-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--hint); }
+        body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 16px 16px 100px 16px; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .main-btn { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--hint); background: var(--card-bg); color: var(--text-color); font-weight: bold; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: var(--accent); color: var(--accent-text); border: none; }
-        .btn-excel { background: var(--success); color: white; border: none; }
-        .btn-back { background: var(--bg-color); border: none; font-size: 20px; }
-        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 30px 16px; background: var(--card-bg); border-top: 0.5px solid rgba(0,0,0,0.1); display: flex; gap: 10px; z-index: 1000; }
-        .offer-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .offer-price { font-size: 17px; font-weight: 700; color: var(--accent); }
+        .offer-card { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,0,0,0.05); }
+        .price { color: var(--accent); font-weight: 800; font-size: 16px; }
+        
+        /* Модальное окно (Меню изменения) */
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; z-index: 2000; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-color); width: 100%; padding: 25px; border-radius: 20px 20px 0 0; }
+        .input-price { width: 100%; padding: 15px; font-size: 18px; border-radius: 10px; border: 1px solid var(--hint); margin: 15px 0; text-align: center; box-sizing: border-box; }
     </style>
 </head>
 <body>
-    <div id="loader"><div class="spinner"></div><div>Загрузка базы данных...</div></div>
-
     <div id="app">
-        <div id="screen-welcome" class="screen">
-            <h2 class="header">Горбушка Онлайн 📱</h2>
+        <div id="screen-welcome" class="screen active">
+            <h2 style="text-align:center">Горбушка Онлайн</h2>
             <div class="card">
                 <button class="main-btn btn-primary" onclick="setRole('buyer')">🛒 Я Покупатель</button>
                 <button class="main-btn" onclick="setRole('seller')">📦 Я Продавец</button>
             </div>
-            <div style="text-align:center; font-size:10px; color:var(--hint)">ID: <span id="debug-id">...</span></div>
         </div>
 
-        <div id="screen-lk" class="screen">
-            <h2 class="header" id="user-name">Меню</h2>
+        <div id="screen-main" class="screen">
+            <h2 id="menu-title" style="text-align:center">Меню</h2>
             <div class="card">
-                <button class="main-btn btn-primary" id="btn-buy" onclick="alert('Выберите категорию в боте или загрузите Excel')">🔍 Найти товар</button>
-                <button class="main-btn" id="btn-my-offers" onclick="showScreen('screen-my-categories')">📋 Мои товары</button>
-                <button class="main-btn btn-excel" id="btn-template" onclick="tg.sendData('REQ_TEMPLATE')">📥 Скачать шаблон (Excel)</button>
+                <button class="main-btn btn-primary" id="btn-buy" onclick="showScreen('screen-catalog')">🔍 Найти товар</button>
+                <button class="main-btn" id="btn-my-items" onclick="showScreen('screen-my-items')">📋 Мои товары</button>
+                <button class="main-btn" style="background:#34c759; color:white; border:none;" onclick="tg.sendData('REQ_TEMPLATE')">📥 Скачать шаблон Excel</button>
             </div>
-            <button style="color:var(--danger); border:none; background:none; width:100%;" onclick="resetRole()">🚪 Выйти</button>
+            <button class="main-btn" style="color:var(--danger); border:none;" onclick="location.reload()">🚪 Выйти</button>
         </div>
 
-        <div id="screen-my-categories" class="screen">
-            <h2 class="header">Мои товары</h2>
-            <div id="my-items-list"></div>
-            <div class="bottom-bar">
-                <button class="main-btn btn-back" onclick="showScreen('screen-lk')">⬅️ Назад</button>
+        <div id="screen-catalog" class="screen">
+            <h2 style="text-align:center">Поиск</h2>
+            <div id="catalog-container"></div>
+            <button class="main-btn" onclick="showScreen('screen-main')">⬅️ Назад</button>
+        </div>
+
+        <div id="screen-my-items" class="screen">
+            <h2 style="text-align:center">Управление ценами</h2>
+            <div id="my-items-container"></div>
+            <button class="main-btn" onclick="showScreen('screen-main')">⬅️ Назад</button>
+        </div>
+    </div>
+
+    <div id="modal-edit" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 id="edit-title" style="margin-top:0">Товар</h3>
+            <input type="number" id="new-price" class="input-price" placeholder="Новая цена">
+            <div style="display:flex; gap:10px">
+                <button class="main-btn" style="background:var(--danger); color:white; border:none; flex:1" onclick="deleteItem()">Удалить 🗑</button>
+                <button class="main-btn btn-primary" style="flex:1" onclick="savePrice()">Сохранить 💾</button>
             </div>
         </div>
     </div>
@@ -86,83 +78,81 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
-        const BACKEND_URL = "http://127.0.0.1:8080";
-        const ADMINS = [464896073]; // Твой ID
-
-        const urlParams = new URLSearchParams(window.location.search);
-        let myId = urlParams.get('uid') ? parseInt(urlParams.get('uid')) : (tg.initDataUnsafe.user?.id || 464896073);
+        const myId = 464896073; 
         let dbOffers = [];
-        let userRole = localStorage.getItem('user_role');
-
-        document.getElementById('debug-id').innerText = myId;
+        let selectedSku = null;
 
         async function init() {
             try {
-                // Пытаемся получить товары от бота
-                const response = await fetch(`${BACKEND_URL}/api/offers`, { signal: AbortSignal.timeout(3000) });
-                if (response.ok) {
-                    dbOffers = await response.json();
-                }
-            } catch (e) {
-                console.log("Бот не отвечает, работаем в оффлайн режиме");
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-                if (!userRole) showScreen('screen-welcome');
-                else {
-                    updateInterface(userRole);
-                    showScreen('screen-lk');
-                }
-            }
-        }
-
-        function setRole(role) {
-            if (role === 'seller' && !ADMINS.includes(myId)) {
-                alert("⛔️ Доступ только для продавцов.");
-                return;
-            }
-            userRole = role;
-            localStorage.setItem('user_role', role);
-            updateInterface(role);
-            showScreen('screen-lk');
-        }
-
-        function updateInterface(role) {
-            const name = tg.initDataUnsafe.user?.first_name || "Александр";
-            document.getElementById('user-name').innerText = role === 'seller' ? `Кабинет: ${name}` : `Магазин: ${name}`;
-            document.getElementById('btn-template').style.display = role === 'seller' ? 'block' : 'none';
-            document.getElementById('btn-my-offers').style.display = role === 'seller' ? 'block' : 'none';
+                const res = await fetch("http://127.0.0.1:8080/api/offers");
+                dbOffers = await res.json();
+            } catch (e) { console.log("База пока пуста"); }
         }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if (id === 'screen-my-categories') renderMyItems();
+            if(id === 'screen-my-items') renderSellerItems();
+            if(id === 'screen-catalog') renderCatalog();
         }
 
-        function renderMyItems() {
-            const list = document.getElementById('my-items-list');
-            const myProducts = dbOffers.filter(o => o.seller_id === myId);
-            
-            if (myProducts.length === 0) {
-                list.innerHTML = '<div class="card">Товаров пока нет. Загрузите Excel в бота.</div>';
-                return;
-            }
+        function setRole(role) {
+            if(role === 'seller' && myId !== 464896073) return alert("Отказ");
+            document.getElementById('btn-my-items').style.display = (role === 'seller') ? 'block' : 'none';
+            document.getElementById('btn-buy').style.display = (role === 'buyer') ? 'block' : 'none';
+            showScreen('screen-main');
+        }
 
-            list.innerHTML = myProducts.map(o => `
-                <div class="offer-card">
+        function renderSellerItems() {
+            const cont = document.getElementById('my-items-container');
+            const myData = dbOffers.filter(o => o.seller_id === myId);
+            if(myData.length === 0) return cont.innerHTML = '<div class="card">Пусто. Загрузите Excel.</div>';
+            
+            cont.innerHTML = myData.map(o => `
+                <div class="offer-card" onclick="openEdit('${o.sku}', '${o.product}', ${o.price})">
                     <div style="text-align:left">
-                        <div style="font-weight:bold">${o.product}</div>
-                        <div style="color:var(--hint); font-size:12px">SKU: ${o.sku}</div>
+                        <b>${o.product}</b><br><small style="color:var(--hint)">SKU: ${o.sku}</small>
                     </div>
-                    <div class="offer-price">${o.price.toLocaleString()} ₽</div>
+                    <div class="price">${o.price.toLocaleString()} ₽</div>
                 </div>
             `).join('');
         }
 
-        function resetRole() {
-            localStorage.removeItem('user_role');
-            location.reload();
+        function renderCatalog() {
+            const cont = document.getElementById('catalog-container');
+            if(dbOffers.length === 0) return cont.innerHTML = '<div class="card">Товаров нет в продаже.</div>';
+            
+            cont.innerHTML = dbOffers.map(o => `
+                <div class="offer-card">
+                    <div style="text-align:left"><b>${o.product}</b><br><small>@${o.username}</small></div>
+                    <div class="price">${o.price.toLocaleString()} ₽</div>
+                    <button class="btn-primary" style="padding:5px 10px; border-radius:5px" onclick="tg.sendData('REQ_BUY|${o.seller_id}|${o.username}|${o.product}|${o.price}')">🛍</button>
+                </div>
+            `).join('');
+        }
+
+        function openEdit(sku, name, price) {
+            selectedSku = sku;
+            document.getElementById('edit-title').innerText = name;
+            document.getElementById('new-price').value = price;
+            document.getElementById('modal-edit').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('modal-edit').classList.remove('active'); }
+
+        function savePrice() {
+            const price = document.getElementById('new-price').value;
+            const name = document.getElementById('edit-title').innerText;
+            tg.sendData(`NEW_PRICE|${name}|${price}`);
+            closeModal();
+            alert("Запрос на изменение отправлен боту");
+        }
+
+        function deleteItem() {
+            if(confirm("Удалить товар?")) {
+                tg.sendData(`DELETE_OFFER|${selectedSku}`);
+                closeModal();
+            }
         }
 
         init();
