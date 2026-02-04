@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Горбушка Онлайн</title>
+    <title>0000</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* --- СТИЛИ (Дизайн V7.0 - Live Data) --- */
@@ -213,7 +213,7 @@
         tg.expand();
 
         // ⚠️ ЗДЕСЬ АДРЕС ВАШЕГО БОТА НА RENDER ⚠️
-        const BACKEND_URL = "https://voluminous-asa-stammeringly.ngrok-free.dev";
+        const BACKEND_URL = "http://127.0.0.1:8080";
 
         const csvData = `
 iPhone 16e, 128 GB, Black, Dual Physical SIM
@@ -365,24 +365,28 @@ iPhone 16 Pro Max, 1 TB, Desert Titanium, Physical + eSIM
         // ГЛАВНАЯ ФУНКЦИЯ ЗАГРУЗКИ
         async function init() {
             try {
-                // 1. Показываем лоадер
                 document.getElementById('loader').style.display = 'flex';
                 
-                // 2. Скачиваем актуальные цены с сервера
-                const response = await fetch(`${BACKEND_URL}/api/offers`);
-                if (!response.ok) throw new Error("Ошибка сети");
-                dbOffers = await response.json();
+                // Пробуем достучаться до бота (используем прямой путь для теста)
+                const response = await fetch("http://127.0.0.1:8080/api/offers");
                 
-                console.log("Загружено товаров:", dbOffers.length);
+                if (!response.ok) throw new Error("Сервер ответил с ошибкой");
+                
+                dbOffers = await response.json();
+                console.log("Данные успешно получены:", dbOffers);
             } catch (e) {
-                console.error(e);
-                alert("Не удалось загрузить цены. Проверьте интернет.");
+                console.error("ОШИБКА ЗАГРУЗКИ:", e);
+                // Если не получилось, попробуй второй вариант пути
+                try {
+                    const secondAttempt = await fetch("http://127.0.0.1:8080/api/items");
+                    dbOffers = await secondAttempt.json();
+                } catch (e2) {
+                    alert("Бот запущен, но сайт не может забрать данные. Проверь CORS в main.py");
+                }
             } finally {
-                // 3. Убираем лоадер
                 document.getElementById('loader').style.display = 'none';
             }
 
-            // 4. Обычная логика запуска
             const role = localStorage.getItem('user_role');
             if(!role) showScreen('screen-welcome');
             else { userRole = role; updateInterface(role); showScreen('screen-lk'); }
