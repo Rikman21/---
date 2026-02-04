@@ -92,4 +92,21 @@ def delete_offer_by_sku(user_id, sku):
     cursor = conn.cursor()
     cursor.execute("DELETE FROM offers WHERE user_id = ? AND sku = ?", (user_id, sku))
     conn.commit()
+    conn.close() 
+
+def update_price_from_web(user_id, product_name, price):
+    """
+    Обновление цены одного товара из WebApp.
+    Ищем по user_id и названию товара (product).
+    Возвращаем количество затронутых строк, чтобы понимать, был ли товар найден.
+    """
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE offers SET price = ? WHERE user_id = ? AND product = ?",
+        (price, user_id, product_name)
+    )
+    affected = cursor.rowcount
+    conn.commit()
     conn.close()
+    return affected

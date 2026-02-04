@@ -16,8 +16,17 @@
             --danger: #ff3b30;
         }
         body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 16px 16px 100px 16px; }
-        .screen { display: none; }
-        .screen.active { display: block; }
+        .screen { 
+            display: none; 
+            opacity: 0;
+            transform: translateX(12px);
+            transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+        }
+        .screen.active { 
+            display: block; 
+            opacity: 1;
+            transform: translateX(0);
+        }
         .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .main-btn { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--hint); background: var(--card-bg); color: var(--text-color); font-weight: bold; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: var(--accent); color: var(--accent-text); border: none; }
@@ -25,9 +34,37 @@
         .price { color: var(--accent); font-weight: 800; font-size: 16px; }
         
         /* Модальное окно (Меню изменения) */
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; z-index: 2000; }
-        .modal.active { display: flex; }
-        .modal-content { background: var(--bg-color); width: 100%; padding: 25px; border-radius: 20px 20px 0 0; }
+        .modal { 
+            position: fixed; 
+            top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0,0,0,0.5); 
+            display: none; 
+            align-items: flex-end; 
+            z-index: 2000; 
+        }
+        .modal.active { 
+            display: flex; 
+            animation: fadeIn 0.2s ease-out;
+        }
+        .modal-content { 
+            background: var(--bg-color); 
+            width: 100%; 
+            padding: 25px; 
+            border-radius: 20px 20px 0 0; 
+        }
+        .modal.active .modal-content {
+            animation: slideUp 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
         .input-price { width: 100%; padding: 15px; font-size: 18px; border-radius: 10px; border: 1px solid var(--hint); margin: 15px 0; text-align: center; box-sizing: border-box; }
     </style>
 </head>
@@ -46,7 +83,7 @@
             <div class="card">
                 <button class="main-btn btn-primary" id="btn-buy" onclick="showScreen('screen-catalog')">🔍 Найти товар</button>
                 <button class="main-btn" id="btn-my-items" onclick="showScreen('screen-my-items')">📋 Мои товары</button>
-                <button class="main-btn" style="background:#34c759; color:white; border:none;" onclick="tg.sendData('REQ_TEMPLATE')">📥 Скачать шаблон Excel</button>
+                <button class="main-btn" id="btn-template" style="background:#34c759; color:white; border:none;" onclick="tg.sendData('REQ_TEMPLATE')">📥 Скачать шаблон Excel</button>
             </div>
             <button class="main-btn" style="color:var(--danger); border:none;" onclick="location.reload()">🚪 Выйти</button>
         </div>
@@ -99,6 +136,7 @@
         function setRole(role) {
             if(role === 'seller' && myId !== 464896073) return alert("Отказ");
             document.getElementById('btn-my-items').style.display = (role === 'seller') ? 'block' : 'none';
+            document.getElementById('btn-template').style.display = (role === 'seller') ? 'block' : 'none';
             document.getElementById('btn-buy').style.display = (role === 'buyer') ? 'block' : 'none';
             showScreen('screen-main');
         }

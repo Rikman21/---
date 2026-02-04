@@ -145,7 +145,26 @@ async def handle_webapp(message: types.Message):
             await message.answer("Продавец не найден.")
 
     elif data.startswith("NEW_PRICE"):
-         await message.answer("Используйте Excel для загрузки цен.")
+        # Формат: NEW_PRICE|Имя товара|Новая цена
+        parts = data.split("|")
+        if len(parts) < 3:
+            await message.answer("Не удалось разобрать данные для изменения цены.")
+            return
+
+        product_name = parts[1]
+        price_raw = parts[2]
+
+        try:
+            new_price = int(str(price_raw).replace(" ", "").replace("₽", ""))
+        except ValueError:
+            await message.answer("Цена указана неверно.")
+            return
+
+        affected = database.update_price_from_web(user_id, product_name, new_price)
+        if affected > 0:
+            await message.answer(f"✅ Цена для «{product_name}» обновлена на {new_price} ₽.")
+        else:
+            await message.answer("Товар не найден в вашей базе. Обновите прайс через Excel, а затем попробуйте снова.")
 
 @dp.callback_query(F.data.startswith("confirm_"))
 async def confirm_order(callback: types.CallbackQuery):
