@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>0000</title>
+    <title>Горбушка Онлайн</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- СТИЛИ (Дизайн V7.0 - Live Data) --- */
         :root {
             --bg-color: var(--tg-theme-bg-color, #f2f2f7);
             --text-color: var(--tg-theme-text-color, #000000);
@@ -16,194 +15,70 @@
             --hint: var(--tg-theme-hint-color, #8e8e93);
             --danger: #ff3b30;
             --success: #34c759;
-            --overlay: rgba(0,0,0,0.4);
         }
 
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, system-ui, sans-serif; 
             background-color: var(--bg-color); 
             color: var(--text-color); 
-            margin: 0; 
-            padding: 16px 16px 120px 16px; 
-            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 16px 16px 120px 16px; 
         }
 
-        .screen { display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .screen { display: none; opacity: 0; transition: opacity 0.2s ease; }
         .screen.active { display: block; opacity: 1; }
         
-        /* Лоадер */
         #loader {
             position: fixed; top:0; left:0; right:0; bottom:0;
             background: var(--bg-color); z-index: 9999;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
+
         .spinner {
             width: 40px; height: 40px; border: 4px solid var(--hint);
             border-top: 4px solid var(--accent); border-radius: 50%;
             animation: spin 1s linear infinite; margin-bottom: 20px;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .header { text-align: center; margin-bottom: 20px; font-size: 22px; font-weight: 700; }
-
-        .card { 
-            background: var(--card-bg); border-radius: 16px; padding: 20px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px;
-        }
-
-        .main-btn { 
-            width: 100%; padding: 14px; border-radius: 12px; border: none; 
-            font-size: 16px; font-weight: 600; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; 
-            background: var(--card-bg); color: var(--text-color); border: 1px solid var(--hint);
-        }
-        .btn-primary { background: var(--accent); color: var(--accent-text); border: none;}
-        .btn-excel { background: var(--success); color: white; border: none; } 
-        .btn-back { background: var(--bg-color); color: var(--text-color); width: 30%; font-size: 22px; margin-bottom: 0; border:none;} 
-        .folder-btn { justify-content: space-between; padding: 16px 20px; text-align: left; }
-        .folder-arrow { color: var(--hint); font-size: 14px; }
-        .list-options { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
-
-        .bottom-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 30px 16px; 
-            background: var(--card-bg); border-top: 0.5px solid rgba(0,0,0,0.1);
-            display: flex; gap: 10px; z-index: 1000;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.05); backdrop-filter: blur(10px); 
-        }
-
-        .offer-card { 
-            background: var(--card-bg); border-radius: 16px; padding: 16px; 
-            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-            opacity: 0; animation: popIn 0.3s ease forwards;
-        }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
-        .offer-info { text-align: left; max-width: 70%;}
-        .offer-name { font-weight:600; font-size:14px; margin-bottom:4px; line-height: 1.2; }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; }
+        .main-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--hint); }
+        .btn-primary { background: var(--accent); color: var(--accent-text); border: none; }
+        .btn-excel { background: var(--success); color: white; border: none; }
+        .btn-back { background: var(--bg-color); border: none; font-size: 20px; }
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 30px 16px; background: var(--card-bg); border-top: 0.5px solid rgba(0,0,0,0.1); display: flex; gap: 10px; z-index: 1000; }
+        .offer-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .offer-price { font-size: 17px; font-weight: 700; color: var(--accent); }
-        .offer-seller { font-size: 12px; color: var(--hint); }
-        .btn-buy-small { 
-            background: var(--accent); color: white; border: none; padding: 8px 16px; 
-            border-radius: 8px; font-weight: 600; font-size: 14px;
-        }
-
-        /* Модальное окно */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--overlay); z-index: 2000;
-            display: flex; align-items: flex-end; 
-            opacity: 0; pointer-events: none; transition: opacity 0.2s;
-        }
-        .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-content {
-            background: var(--bg-color); width: 100%; 
-            border-top-left-radius: 20px; border-top-right-radius: 20px;
-            padding: 24px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            padding-bottom: 50px;
-        }
-        .modal-overlay.open .modal-content { transform: translateY(0); }
-        .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 20px; text-align: center; }
-        .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
-        .input-edit { 
-            width: 100%; padding: 12px; font-size: 20px; border-radius: 12px;
-            border: 1px solid var(--hint); outline: none; text-align: center; box-sizing: border-box; background: var(--card-bg); color: var(--text-color);
-        }
-        .btn-modal-delete { background: var(--danger); color: white; flex: 1; border:none; padding: 14px; border-radius: 12px; font-weight: 600;}
-        .btn-modal-save { background: var(--accent); color: white; flex: 1; border:none; padding: 14px; border-radius: 12px; font-weight: 600;}
-
-        .debug-box { font-size: 10px; color: var(--hint); text-align: center; margin-top: 10px; opacity: 0.5; }
-        .admin-badge { background: var(--danger); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 5px;}
     </style>
 </head>
 <body>
-    <div id="loader">
-        <div class="spinner"></div>
-        <div>Загрузка цен...</div>
-    </div>
+    <div id="loader"><div class="spinner"></div><div>Загрузка базы данных...</div></div>
 
     <div id="app">
-        
         <div id="screen-welcome" class="screen">
             <h2 class="header">Горбушка Онлайн 📱</h2>
             <div class="card">
-                <p style="margin-bottom: 15px;">Выберите роль:</p>
                 <button class="main-btn btn-primary" onclick="setRole('buyer')">🛒 Я Покупатель</button>
-                <button class="main-btn btn-outline" onclick="setRole('seller')">📦 Я Продавец</button>
+                <button class="main-btn" onclick="setRole('seller')">📦 Я Продавец</button>
             </div>
-            <div class="debug-box">ID: <span id="debug-id">...</span></div>
+            <div style="text-align:center; font-size:10px; color:var(--hint)">ID: <span id="debug-id">...</span></div>
         </div>
 
         <div id="screen-lk" class="screen">
             <h2 class="header" id="user-name">Меню</h2>
             <div class="card">
-                <button class="main-btn btn-primary" id="btn-buy" onclick="startFlow()">🔍 Найти товар</button>
-                <button class="main-btn btn-outline" id="btn-my-offers" onclick="goToMyCategories()">📋 Мои товары</button>
-                <button class="main-btn btn-excel" id="btn-template" onclick="requestTemplate()">📥 Скачать шаблон (Excel)</button>
+                <button class="main-btn btn-primary" id="btn-buy" onclick="alert('Выберите категорию в боте или загрузите Excel')">🔍 Найти товар</button>
+                <button class="main-btn" id="btn-my-offers" onclick="showScreen('screen-my-categories')">📋 Мои товары</button>
+                <button class="main-btn btn-excel" id="btn-template" onclick="tg.sendData('REQ_TEMPLATE')">📥 Скачать шаблон (Excel)</button>
             </div>
-            <button style="margin-top: 20px; background: transparent; color: var(--danger); border:none; width:100%; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="resetRole()">🚪 Выйти (Сменить роль)</button>
-        </div>
-
-        <div id="screen-flow" class="screen">
-            <h2 id="flow-title" class="header">Выбор</h2>
-            <div id="flow-content" class="list-options"></div> 
-            <div class="bottom-bar">
-                <button class="main-btn btn-back" onclick="goBack()">⬅️</button>
-                <div style="width: 100%; display:flex; align-items:center; justify-content:center; color: var(--hint); font-size: 12px;">Шаг назад</div>
-            </div>
-        </div>
-
-        <div id="screen-offers" class="screen">
-            <h2 class="header">Предложения 📋</h2>
-            <div id="offers-list"></div>
-            <div class="bottom-bar">
-                <button class="main-btn btn-back" style="width: 100%" onclick="showScreen('screen-flow')">⬅️ Назад к параметрам</button>
-            </div>
+            <button style="color:var(--danger); border:none; background:none; width:100%;" onclick="resetRole()">🚪 Выйти</button>
         </div>
 
         <div id="screen-my-categories" class="screen">
-            <h2 class="header">Категории 📦</h2>
-            <div class="list-options">
-                <button class="main-btn folder-btn" onclick="goToMyFamilies('iPhone')">
-                    <span>📱 iPhone</span> <span class="folder-arrow">›</span>
-                </button>
-                <button class="main-btn folder-btn" style="opacity:0.5" onclick="alert('Скоро!')">
-                    <span>💻 Mac (Скоро)</span> <span class="folder-arrow">›</span>
-                </button>
-                <button class="main-btn folder-btn" style="opacity:0.5" onclick="alert('Скоро!')">
-                    <span>⌚️ Watch (Скоро)</span> <span class="folder-arrow">›</span>
-                </button>
-            </div>
+            <h2 class="header">Мои товары</h2>
+            <div id="my-items-list"></div>
             <div class="bottom-bar">
-                <button class="main-btn btn-back" style="width: 100%" onclick="showScreen('screen-lk')">⬅️ В меню</button>
-            </div>
-        </div>
-
-        <div id="screen-my-families" class="screen">
-            <h2 class="header">Модели</h2>
-            <div id="family-list" class="list-options"></div>
-            <div class="bottom-bar">
-                <button class="main-btn btn-back" style="width: 100%" onclick="showScreen('screen-my-categories')">⬅️ Назад</button>
-            </div>
-        </div>
-
-        <div id="screen-my-list" class="screen">
-            <h2 class="header" id="my-list-title">Товары</h2>
-            <div id="my-items-list" style="padding-bottom: 20px;"></div>
-            <div class="bottom-bar">
-                <button class="main-btn btn-back" style="width: 100%" onclick="showScreen('screen-my-families')">⬅️ Назад</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="modal-edit" class="modal-overlay" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-title">Управление товаром</div>
-            <p id="modal-product-name" style="text-align:center; color:var(--hint); margin-bottom:15px; font-size:14px;"></p>
-            <input type="number" id="modal-price-input" class="input-edit" placeholder="Новая цена">
-            <div class="modal-actions">
-                <button class="btn-modal-delete" onclick="actionDelete()">Удалить 🗑</button>
-                <button class="btn-modal-save" onclick="actionSave()">Сохранить 💾</button>
+                <button class="main-btn btn-back" onclick="showScreen('screen-lk')">⬅️ Назад</button>
             </div>
         </div>
     </div>
@@ -212,361 +87,83 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // ⚠️ ЗДЕСЬ АДРЕС ВАШЕГО БОТА НА RENDER ⚠️
         const BACKEND_URL = "http://127.0.0.1:8080";
+        const ADMINS = [464896073]; // Твой ID
 
-        const csvData = `
-iPhone 16e, 128 GB, Black, Dual Physical SIM
-iPhone 16e, 256 GB, Black, Dual Physical SIM
-iPhone 16e, 512 GB, Black, Dual Physical SIM
-iPhone 16e, 128 GB, White, Dual Physical SIM
-iPhone 16e, 256 GB, White, Dual Physical SIM
-iPhone 16e, 512 GB, White, Dual Physical SIM
-iPhone 16e, 128 GB, Black, Physical + eSIM
-iPhone 16e, 256 GB, Black, Physical + eSIM
-iPhone 16e, 512 GB, Black, Physical + eSIM
-iPhone 16e, 128 GB, White, Physical + eSIM
-iPhone 16e, 256 GB, White, Physical + eSIM
-iPhone 16e, 512 GB, White, Physical + eSIM
-iPhone 16, 128 GB, Black, Dual Physical SIM
-iPhone 16, 256 GB, Black, Dual Physical SIM
-iPhone 16, 512 GB, Black, Dual Physical SIM
-iPhone 16, 128 GB, White, Dual Physical SIM
-iPhone 16, 256 GB, White, Dual Physical SIM
-iPhone 16, 512 GB, White, Dual Physical SIM
-iPhone 16, 128 GB, Pink, Dual Physical SIM
-iPhone 16, 256 GB, Pink, Dual Physical SIM
-iPhone 16, 512 GB, Pink, Dual Physical SIM
-iPhone 16, 128 GB, Teal, Dual Physical SIM
-iPhone 16, 256 GB, Teal, Dual Physical SIM
-iPhone 16, 512 GB, Teal, Dual Physical SIM
-iPhone 16, 128 GB, Ultramarine, Dual Physical SIM
-iPhone 16, 256 GB, Ultramarine, Dual Physical SIM
-iPhone 16, 512 GB, Ultramarine, Dual Physical SIM
-iPhone 16, 128 GB, Black, Physical + eSIM
-iPhone 16, 256 GB, Black, Physical + eSIM
-iPhone 16, 512 GB, Black, Physical + eSIM
-iPhone 16, 128 GB, White, Physical + eSIM
-iPhone 16, 256 GB, White, Physical + eSIM
-iPhone 16, 512 GB, White, Physical + eSIM
-iPhone 16, 128 GB, Pink, Physical + eSIM
-iPhone 16, 256 GB, Pink, Physical + eSIM
-iPhone 16, 512 GB, Pink, Physical + eSIM
-iPhone 16, 128 GB, Teal, Physical + eSIM
-iPhone 16, 256 GB, Teal, Physical + eSIM
-iPhone 16, 512 GB, Teal, Physical + eSIM
-iPhone 16, 128 GB, Ultramarine, Physical + eSIM
-iPhone 16, 256 GB, Ultramarine, Physical + eSIM
-iPhone 16, 512 GB, Ultramarine, Physical + eSIM
-iPhone 16 Plus, 128 GB, Black, Dual Physical SIM
-iPhone 16 Plus, 256 GB, Black, Dual Physical SIM
-iPhone 16 Plus, 512 GB, Black, Dual Physical SIM
-iPhone 16 Plus, 128 GB, White, Dual Physical SIM
-iPhone 16 Plus, 256 GB, White, Dual Physical SIM
-iPhone 16 Plus, 512 GB, White, Dual Physical SIM
-iPhone 16 Plus, 128 GB, Pink, Dual Physical SIM
-iPhone 16 Plus, 256 GB, Pink, Dual Physical SIM
-iPhone 16 Plus, 512 GB, Pink, Dual Physical SIM
-iPhone 16 Plus, 128 GB, Teal, Dual Physical SIM
-iPhone 16 Plus, 256 GB, Teal, Dual Physical SIM
-iPhone 16 Plus, 512 GB, Teal, Dual Physical SIM
-iPhone 16 Plus, 128 GB, Ultramarine, Dual Physical SIM
-iPhone 16 Plus, 256 GB, Ultramarine, Dual Physical SIM
-iPhone 16 Plus, 512 GB, Ultramarine, Dual Physical SIM
-iPhone 16 Plus, 128 GB, Black, Physical + eSIM
-iPhone 16 Plus, 256 GB, Black, Physical + eSIM
-iPhone 16 Plus, 512 GB, Black, Physical + eSIM
-iPhone 16 Plus, 128 GB, White, Physical + eSIM
-iPhone 16 Plus, 256 GB, White, Physical + eSIM
-iPhone 16 Plus, 512 GB, White, Physical + eSIM
-iPhone 16 Plus, 128 GB, Pink, Physical + eSIM
-iPhone 16 Plus, 256 GB, Pink, Physical + eSIM
-iPhone 16 Plus, 512 GB, Pink, Physical + eSIM
-iPhone 16 Plus, 128 GB, Teal, Physical + eSIM
-iPhone 16 Plus, 256 GB, Teal, Physical + eSIM
-iPhone 16 Plus, 512 GB, Teal, Physical + eSIM
-iPhone 16 Plus, 128 GB, Ultramarine, Physical + eSIM
-iPhone 16 Plus, 256 GB, Ultramarine, Physical + eSIM
-iPhone 16 Plus, 512 GB, Ultramarine, Physical + eSIM
-iPhone 16 Pro, 128 GB, Black Titanium, Dual Physical SIM
-iPhone 16 Pro, 256 GB, Black Titanium, Dual Physical SIM
-iPhone 16 Pro, 512 GB, Black Titanium, Dual Physical SIM
-iPhone 16 Pro, 1 TB, Black Titanium, Dual Physical SIM
-iPhone 16 Pro, 128 GB, White Titanium, Dual Physical SIM
-iPhone 16 Pro, 256 GB, White Titanium, Dual Physical SIM
-iPhone 16 Pro, 512 GB, White Titanium, Dual Physical SIM
-iPhone 16 Pro, 1 TB, White Titanium, Dual Physical SIM
-iPhone 16 Pro, 128 GB, Natural Titanium, Dual Physical SIM
-iPhone 16 Pro, 256 GB, Natural Titanium, Dual Physical SIM
-iPhone 16 Pro, 512 GB, Natural Titanium, Dual Physical SIM
-iPhone 16 Pro, 1 TB, Natural Titanium, Dual Physical SIM
-iPhone 16 Pro, 128 GB, Desert Titanium, Dual Physical SIM
-iPhone 16 Pro, 256 GB, Desert Titanium, Dual Physical SIM
-iPhone 16 Pro, 512 GB, Desert Titanium, Dual Physical SIM
-iPhone 16 Pro, 1 TB, Desert Titanium, Dual Physical SIM
-iPhone 16 Pro, 128 GB, Black Titanium, Physical + eSIM
-iPhone 16 Pro, 256 GB, Black Titanium, Physical + eSIM
-iPhone 16 Pro, 512 GB, Black Titanium, Physical + eSIM
-iPhone 16 Pro, 1 TB, Black Titanium, Physical + eSIM
-iPhone 16 Pro, 128 GB, White Titanium, Physical + eSIM
-iPhone 16 Pro, 256 GB, White Titanium, Physical + eSIM
-iPhone 16 Pro, 512 GB, White Titanium, Physical + eSIM
-iPhone 16 Pro, 1 TB, White Titanium, Physical + eSIM
-iPhone 16 Pro, 128 GB, Natural Titanium, Physical + eSIM
-iPhone 16 Pro, 256 GB, Natural Titanium, Physical + eSIM
-iPhone 16 Pro, 512 GB, Natural Titanium, Physical + eSIM
-iPhone 16 Pro, 1 TB, Natural Titanium, Physical + eSIM
-iPhone 16 Pro, 128 GB, Desert Titanium, Physical + eSIM
-iPhone 16 Pro, 256 GB, Desert Titanium, Physical + eSIM
-iPhone 16 Pro, 512 GB, Desert Titanium, Physical + eSIM
-iPhone 16 Pro, 1 TB, Desert Titanium, Physical + eSIM
-iPhone 16 Pro Max, 256 GB, Black Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 512 GB, Black Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 1 TB, Black Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 256 GB, White Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 512 GB, White Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 1 TB, White Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 256 GB, Natural Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 512 GB, Natural Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 1 TB, Natural Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 256 GB, Desert Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 512 GB, Desert Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 1 TB, Desert Titanium, Dual Physical SIM
-iPhone 16 Pro Max, 256 GB, Black Titanium, Physical + eSIM
-iPhone 16 Pro Max, 512 GB, Black Titanium, Physical + eSIM
-iPhone 16 Pro Max, 1 TB, Black Titanium, Physical + eSIM
-iPhone 16 Pro Max, 256 GB, White Titanium, Physical + eSIM
-iPhone 16 Pro Max, 512 GB, White Titanium, Physical + eSIM
-iPhone 16 Pro Max, 1 TB, White Titanium, Physical + eSIM
-iPhone 16 Pro Max, 256 GB, Natural Titanium, Physical + eSIM
-iPhone 16 Pro Max, 512 GB, Natural Titanium, Physical + eSIM
-iPhone 16 Pro Max, 1 TB, Natural Titanium, Physical + eSIM
-iPhone 16 Pro Max, 256 GB, Desert Titanium, Physical + eSIM
-iPhone 16 Pro Max, 512 GB, Desert Titanium, Physical + eSIM
-iPhone 16 Pro Max, 1 TB, Desert Titanium, Physical + eSIM
-        `;
-
-        // ⚠️ ЗАМЕНИТЕ НА ВАШИ ID ⚠️
-        const admins = [464896073, 210419]; 
-        const sellers = [464896073, 210419]; 
-        
         const urlParams = new URLSearchParams(window.location.search);
-        let myId = urlParams.get('uid') ? parseInt(urlParams.get('uid')) : tg.initDataUnsafe.user?.id;
-        document.getElementById('debug-id').innerText = myId || "НЕ ОПРЕДЕЛЕН";
+        let myId = urlParams.get('uid') ? parseInt(urlParams.get('uid')) : (tg.initDataUnsafe.user?.id || 464896073);
+        let dbOffers = [];
+        let userRole = localStorage.getItem('user_role');
 
-        const catalogData = csvData.trim().split('\n').map(row => row.split(',').map(s => s.trim()));
-        const headers = ["📱 Модель", "💾 Память", "🎨 Цвет", "📲 Сим-карта"];
+        document.getElementById('debug-id').innerText = myId;
 
-        let dbOffers = []; 
-        let currentSelection = [];
-        let userRole = '';
-        let currentEditingSku = null; 
-
-        // ГЛАВНАЯ ФУНКЦИЯ ЗАГРУЗКИ
         async function init() {
             try {
-                document.getElementById('loader').style.display = 'flex';
-                
-                // Пробуем достучаться до бота (используем прямой путь для теста)
-                const response = await fetch("http://127.0.0.1:8080/api/offers");
-                
-                if (!response.ok) throw new Error("Сервер ответил с ошибкой");
-                
-                dbOffers = await response.json();
-                console.log("Данные успешно получены:", dbOffers);
-            } catch (e) {
-                console.error("ОШИБКА ЗАГРУЗКИ:", e);
-                // Если не получилось, попробуй второй вариант пути
-                try {
-                    const secondAttempt = await fetch("http://127.0.0.1:8080/api/items");
-                    dbOffers = await secondAttempt.json();
-                } catch (e2) {
-                    alert("Бот запущен, но сайт не может забрать данные. Проверь CORS в main.py");
+                // Пытаемся получить товары от бота
+                const response = await fetch(`${BACKEND_URL}/api/offers`, { signal: AbortSignal.timeout(3000) });
+                if (response.ok) {
+                    dbOffers = await response.json();
                 }
+            } catch (e) {
+                console.log("Бот не отвечает, работаем в оффлайн режиме");
             } finally {
                 document.getElementById('loader').style.display = 'none';
+                if (!userRole) showScreen('screen-welcome');
+                else {
+                    updateInterface(userRole);
+                    showScreen('screen-lk');
+                }
             }
-
-            const role = localStorage.getItem('user_role');
-            if(!role) showScreen('screen-welcome');
-            else { userRole = role; updateInterface(role); showScreen('screen-lk'); }
         }
 
         function setRole(role) {
-            const isAllowed = sellers.includes(myId) || admins.includes(myId);
-            if(role === 'seller' && !isAllowed) return alert("⛔️ Нет доступа.");
-            localStorage.setItem('user_role', role);
+            if (role === 'seller' && !ADMINS.includes(myId)) {
+                alert("⛔️ Доступ только для продавцов.");
+                return;
+            }
             userRole = role;
+            localStorage.setItem('user_role', role);
             updateInterface(role);
             showScreen('screen-lk');
         }
 
-        function resetRole() { localStorage.removeItem('user_role'); location.reload(); }
-
         function updateInterface(role) {
-            const userName = tg.initDataUnsafe.user?.first_name || "Пользователь";
-            const isAdmin = admins.includes(myId);
-            const badge = isAdmin ? ' <span class="admin-badge">ADMIN</span>' : '';
-            document.getElementById('user-name').innerHTML = userName + badge;
-            document.getElementById('btn-buy').style.display = (role === 'buyer') ? 'block' : 'none';
-            
-            if (role === 'seller') {
-                document.getElementById('btn-template').style.display = 'block';
-                document.getElementById('btn-my-offers').style.display = 'block';
-            } else {
-                document.getElementById('btn-template').style.display = 'none';
-                document.getElementById('btn-my-offers').style.display = 'none';
-            }
+            const name = tg.initDataUnsafe.user?.first_name || "Александр";
+            document.getElementById('user-name').innerText = role === 'seller' ? `Кабинет: ${name}` : `Магазин: ${name}`;
+            document.getElementById('btn-template').style.display = role === 'seller' ? 'block' : 'none';
+            document.getElementById('btn-my-offers').style.display = role === 'seller' ? 'block' : 'none';
         }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            window.scrollTo(0,0);
             document.getElementById(id).classList.add('active');
+            if (id === 'screen-my-categories') renderMyItems();
         }
 
-        function requestTemplate() { tg.sendData("REQ_TEMPLATE"); }
-
-        function startFlow() { currentSelection = []; renderStep(0); showScreen('screen-flow'); }
-        function goBack() { 
-            if (currentSelection.length > 0) { currentSelection.pop(); renderStep(currentSelection.length); } 
-            else { showScreen('screen-lk'); }
-        }
-
-        function renderStep(stepIndex) {
-            if (stepIndex >= headers.length) { finishFlow(); return; }
-            document.getElementById('flow-title').innerText = headers[stepIndex];
+        function renderMyItems() {
+            const list = document.getElementById('my-items-list');
+            const myProducts = dbOffers.filter(o => o.seller_id === myId);
             
-            const availableOptions = new Set();
-            catalogData.forEach(row => {
-                let match = true;
-                for(let i=0; i < stepIndex; i++) { if (row[i] !== currentSelection[i]) match = false; }
-                if (match) availableOptions.add(row[stepIndex]);
-            });
-
-            let h = '';
-            Array.from(availableOptions).sort().forEach((opt, index) => {
-                const delay = index * 0.05; 
-                h += `<button class="main-btn btn-outline" style="animation-delay: ${delay}s" onclick="makeSelection('${opt}')">${opt}</button>`;
-            });
-            document.getElementById('flow-content').innerHTML = h;
-        }
-
-        function makeSelection(value) { currentSelection.push(value); renderStep(currentSelection.length); }
-        function finishFlow() {
-            const productName = currentSelection.join(' '); 
-            if (userRole === 'buyer') renderOffers(productName);
-            // Если продавец - просто показываем пустоту, т.к. ручное добавление отключили
-            else alert("Ручное добавление отключено. Используйте Excel.");
-        }
-
-        function renderOffers(productName) {
-            let h = '';
-            const relevantOffers = dbOffers.filter(o => o.product === productName);
-            relevantOffers.sort((a,b)=>a.price-b.price);
-            if (relevantOffers.length === 0) h = '<div style="text-align:center; padding:40px; color:var(--hint);">Предложений пока нет 😔</div>';
-            else {
-                relevantOffers.forEach((o, index) => {
-                    const delay = index * 0.1;
-                    h += `
-                    <div class="offer-card" style="animation-delay: ${delay}s">
-                        <div class="offer-info">
-                            <div class="offer-price">${o.price.toLocaleString()} ₽</div>
-                            <div class="offer-seller">@${o.username}</div>
-                        </div>
-                        <button class="btn-buy-small" onclick="requestBuy('${o.id}', '${o.username}', '${o.price}', '${productName}')">🛍️ Купить</button>
-                    </div>`;
-                });
+            if (myProducts.length === 0) {
+                list.innerHTML = '<div class="card">Товаров пока нет. Загрузите Excel в бота.</div>';
+                return;
             }
-            document.getElementById('offers-list').innerHTML = h;
-            showScreen('screen-offers');
-        }
 
-        // --- ЛОГИКА "МОИ ТОВАРЫ" ---
-        function goToMyCategories() { showScreen('screen-my-categories'); }
-
-        function goToMyFamilies(category) {
-            const myOffers = dbOffers.filter(o => o.seller_id === myId);
-            if(myOffers.length === 0) return alert("Нет товаров. Загрузите прайс через Excel.");
-
-            const families = new Set();
-            myOffers.forEach(o => {
-                const parts = o.product.split(' ');
-                if(parts.length >= 2) families.add(parts[0] + ' ' + parts[1]);
-            });
-
-            let h = '';
-            h += `<button class="main-btn folder-btn" style="background:var(--accent); color:white;" onclick="goToMyList('ALL')">📑 ВЕСЬ СПИСОК</button>`;
-            
-            Array.from(families).sort().reverse().forEach((fam, index) => {
-                h += `<button class="main-btn folder-btn" onclick="goToMyList('${fam}')">
-                        <span>📱 ${fam} Series</span> <span class="folder-arrow">›</span>
-                      </button>`;
-            });
-
-            document.getElementById('family-list').innerHTML = h;
-            showScreen('screen-my-families');
-        }
-
-        function goToMyList(filter) {
-            const myOffers = dbOffers.filter(o => o.seller_id === myId);
-            let filtered = (filter === 'ALL') ? myOffers : myOffers.filter(o => o.product.startsWith(filter));
-            
-            document.getElementById('my-list-title').innerText = (filter === 'ALL') ? "Все товары" : filter;
-
-            let h = '';
-            filtered.sort((a,b) => a.product.localeCompare(b.product));
-
-            filtered.forEach((o, index) => {
-                const delay = index * 0.05;
-                const shortName = o.product.replace("iPhone ", ""); 
-                h += `
-                <div class="offer-card" style="animation-delay: ${delay}s" onclick="openModal('${o.sku}', '${o.price}', '${o.product}')">
-                    <div class="offer-info">
-                        <div class="offer-name">${shortName}</div>
-                        <div class="offer-seller">SKU: ${o.sku}</div>
+            list.innerHTML = myProducts.map(o => `
+                <div class="offer-card">
+                    <div style="text-align:left">
+                        <div style="font-weight:bold">${o.product}</div>
+                        <div style="color:var(--hint); font-size:12px">SKU: ${o.sku}</div>
                     </div>
                     <div class="offer-price">${o.price.toLocaleString()} ₽</div>
-                </div>`;
-            });
-            document.getElementById('my-items-list').innerHTML = h;
-            showScreen('screen-my-list');
+                </div>
+            `).join('');
         }
 
-        // --- МОДАЛЬНОЕ ОКНО ---
-        function openModal(sku, price, name) {
-            currentEditingSku = sku;
-            document.getElementById('modal-product-name').innerText = name;
-            document.getElementById('modal-price-input').value = price;
-            document.getElementById('modal-edit').classList.add('open');
+        function resetRole() {
+            localStorage.removeItem('user_role');
+            location.reload();
         }
-
-        function closeModal(e) {
-            if (e.target.id === 'modal-edit') document.getElementById('modal-edit').classList.remove('open');
-        }
-
-        function actionDelete() {
-            if(!currentEditingSku) return;
-            if(confirm("Удалить товар?")) {
-                tg.sendData(`DELETE_OFFER|${currentEditingSku}`);
-                document.getElementById('modal-edit').classList.remove('open');
-                // Удаляем визуально без перезагрузки (для красоты)
-                dbOffers = dbOffers.filter(o => o.sku !== currentEditingSku);
-                alert("Удалено! (Обновите страницу, если хотите убедиться)");
-                showScreen('screen-lk');
-            }
-        }
-
-        function actionSave() {
-            if(!currentEditingSku) return;
-            const newPrice = document.getElementById('modal-price-input').value;
-            if(!newPrice) return alert("Введите цену");
-            const name = document.getElementById('modal-product-name').innerText;
-            tg.sendData(`NEW_PRICE|${name}|${newPrice}`); 
-            document.getElementById('modal-edit').classList.remove('open');
-        }
-
-        function requestBuy(sid, sname, price, pname) { tg.sendData(`REQ_BUY|${sid}|${sname}|${pname}|${price}`); }
 
         init();
     </script>
